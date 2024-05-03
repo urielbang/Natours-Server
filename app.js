@@ -24,11 +24,11 @@ app.use('/api/v1/users', userRouter);
 
 //! 2) Routes
 
-app.all('*', (req, res, next) => {
-  next(new AppError(`Cannt find ${req.originalUrl} on this server!`));
+// app.all('*', (req, res, next) => {
+//   next(new AppError(`Cannt find ${req.originalUrl} on this server!`));
 
-  next(err);
-});
+//   next(err);
+// });
 
 //! ERROR HANDLING ,MIDLLEWARE
 app.use(errorHandle);
