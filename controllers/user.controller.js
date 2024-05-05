@@ -2,8 +2,19 @@ const { User } = require('../models/userModel');
 const AppError = require('../utils/appError');
 const { catchAsync } = require('../utils/catchAsync');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) {
+      newObj[el] = obj[el];
+    }
+  });
+
+  return newObj;
+};
+
 const getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
+  const users = await User.find({ ...req.query });
 
   res.status(200).json({
     status: 'success',
@@ -36,7 +47,7 @@ const deleteUser = (req, res) => {
   });
 };
 
-const updateMe = (req, res, next) => {
+const updateMe = catchAsync(async (req, res, next) => {
   // 1) create error if users Posts password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -48,11 +59,26 @@ const updateMe = (req, res, next) => {
   }
 
   // 2) Update user document
+  const filterdBody = filterObj(req.body, 'name', 'email');
+  const updatedUer = await User.findByIdAndUpdate(req.user.id, filterdBody, {
+    new: true,
+    runValidators: true,
+  });
 
   res.status(200).json({
     status: 'success',
+    data: {
+      user: updatedUer,
+    },
   });
-};
+});
+const deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
 module.exports = {
   deleteUser,
   updateUser,
@@ -60,4 +86,5 @@ module.exports = {
   createUser,
   getAllUsers,
   updateMe,
+  deleteMe,
 };
