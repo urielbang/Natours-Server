@@ -6,6 +6,7 @@ const {
   getUser,
   createUser,
   getAllUsers,
+  updateMe,
 } = require('../controllers/user.controller');
 const router = express.Router();
 
@@ -20,6 +21,8 @@ router.patch(
   authController.protect,
   authController.updatePassword,
 );
+
+router.patch('/updateMe', authController.protect, updateMe);
 
 router.route('/').get(getAllUsers).get(createUser);
 
