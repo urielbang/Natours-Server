@@ -15,6 +15,25 @@ const signToken = (id) => {
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
+  console.log(typeof process.env.JWT_COOKIE_EXPIRES_IN);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() +
+        Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+  };
+  console.log(
+    Date.now() +
+      Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+  );
+
+  if (process.env.NODE_ENV === 'Production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token);
+
+  user.password = undefined;
+
   res.status(statusCode).json({
     status: 'success',
     token,
