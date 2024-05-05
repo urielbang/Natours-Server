@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
+const xss = require('xss');
 
 const tourRouter = require('./routes/tour.routes');
 const userRouter = require('./routes/user.routes');
@@ -33,7 +33,14 @@ app.use(express.json({ limit: '10kb' }));
 app.use(mongoSanitize());
 
 // Data sanitization against XSS
-app.use(xss());
+const sanitizeInput = (req, res, next) => {
+  // Loop through req.body and sanitize each field
+  for (const key in req.body) {
+    req.body[key] = xss(req.body[key]);
+  }
+  next();
+};
+app.use(sanitizeInput);
 
 //Serving static files
 app.use(express.static(`${__dirname}/public`));
