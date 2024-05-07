@@ -15,7 +15,6 @@ const signToken = (id) => {
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
-  console.log(typeof process.env.JWT_COOKIE_EXPIRES_IN);
   const cookieOptions = {
     expires: new Date(
       Date.now() +
