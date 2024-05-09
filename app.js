@@ -8,6 +8,7 @@ const hpp = require('hpp');
 
 const tourRouter = require('./routes/tour.routes');
 const userRouter = require('./routes/user.routes');
+const reviewRouter = require('./routes/review.routes');
 const { errorHandle } = require('./controllers/error.Controller');
 
 const app = express();
@@ -70,6 +71,7 @@ app.use((req, res, next) => {
 //! 2) Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 //! ERROR HANDLING ,MIDLLEWARE
 app.use(errorHandle);
