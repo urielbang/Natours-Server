@@ -30,7 +30,6 @@ const getAllTours = catchAsync(async (req, res, next) => {
 });
 const getTourById = catchAsync(async (req, res, next) => {
   const foundTour = await Tour.findById(req.params.id);
-
   if (!foundTour) {
     return next(new AppError('no tour found with that id', 404));
   }
@@ -42,6 +41,8 @@ const getTourById = catchAsync(async (req, res, next) => {
 });
 
 const addTour = catchAsync(async (req, res, next) => {
+  req.body.guides = req.body.guides.split(',');
+
   const newTour = await Tour.create(req.body);
   return res.status(201).json({
     status: 'success',
@@ -51,6 +52,7 @@ const addTour = catchAsync(async (req, res, next) => {
   });
 });
 const updateTour = catchAsync(async (req, res, next) => {
+  req.body.guides = req.body.guides.split(',');
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
