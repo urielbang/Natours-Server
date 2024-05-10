@@ -2,8 +2,9 @@ const { catchAsync } = require('../utils/catchAsync');
 const { Review } = require('../models/reviewModel');
 
 exports.getAllReviews = catchAsync(async (req, res) => {
-  const reviews = await Review.find({});
+  const reviews = await Review.find().populate('user').populate('tour');
   res.status(200).json({
+    results: reviews.length,
     data: {
       status: 'succses',
       data: reviews,
