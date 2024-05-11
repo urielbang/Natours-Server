@@ -87,6 +87,7 @@ const tourSchema = new mongoose.Schema(
       },
     ],
     guides: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+    reviews: [{ type: mongoose.Types.ObjectId, ref: 'Review' }],
   },
 
   {
@@ -100,6 +101,12 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+//! Virtual populate
+// tourSchema.virtual('reviews', {
+//   ref: 'Review',
+//   foreignField: 'tour',
+//   localField: '_id',
+// });
 //! Document middalware runs before .svae() and Create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { upper: true });

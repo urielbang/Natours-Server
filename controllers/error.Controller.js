@@ -43,6 +43,7 @@ const sendErrorProd = (err, res) => {
 };
 const handleJWTExpiredError = () =>
   new AppError('Your token has expaierd! please log in again', 401);
+
 const handleJwtError = () =>
   new AppError('Inavlid token. please log in again', 401);
 
