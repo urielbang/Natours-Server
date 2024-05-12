@@ -1,6 +1,4 @@
 const { Tour } = require('../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
 const { catchAsync } = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
@@ -14,62 +12,10 @@ const aliasTopTours = (req, res, next) => {
   next();
 };
 
-const getAllTours = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .Paginate();
-
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    tours: tours,
-  });
-});
-const getTourById = catchAsync(async (req, res, next) => {
-  const foundTour = await Tour.findById(req.params.id).populate('reviews');
-  if (!foundTour) {
-    return next(new AppError('no tour found with that id', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    tour: foundTour,
-  });
-});
-
-const addTour = catchAsync(async (req, res, next) => {
-  req.body.guides = req.body.guides.split(',');
-
-  const newTour = await Tour.create(req.body);
-  return res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-const updateTour = catchAsync(async (req, res, next) => {
-  req.body.guides = req.body.guides.split(',');
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!tour) {
-    return next(new AppError('no tour found with that id', 404));
-  }
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
+const getAllTours = factory.getAll(Tour);
+const getTourById = factory.getOne(Tour, { path: 'reviews' });
+const addTour = factory.createOne(Tour);
+const updateTour = factory.updateOne(Tour);
 const deleteTour = factory.deleteOne(Tour);
 
 const getTourStats = catchAsync(async (req, res, next) => {
