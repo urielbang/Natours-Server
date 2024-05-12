@@ -1,7 +1,8 @@
 const express = require('express');
-const router = express.Router();
 const reviewController = require('../controllers/review.Controller');
 const authController = require('../controllers/auth.Controller');
+
+const router = express.Router({ mergeParams: true });
 
 router
   .get('/', reviewController.getAllReviews)
@@ -11,5 +12,6 @@ router
     authController.restrictTo('user'),
     reviewController.addReview,
   );
+router.delete('/:id', reviewController.deleteReview);
 
 module.exports = router;

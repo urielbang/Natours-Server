@@ -2,6 +2,7 @@ const { Tour } = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const { catchAsync } = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 //! middalware
 
@@ -68,15 +69,8 @@ const updateTour = catchAsync(async (req, res, next) => {
     },
   });
 });
-const deleteTour = catchAsync(async (req, res, next) => {
-  const tourDelted = await Tour.findByIdAndDelete(req.params.id);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: tourDelted,
-    },
-  });
-});
+
+const deleteTour = factory.deleteOne(Tour);
 
 const getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
