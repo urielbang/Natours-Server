@@ -1,6 +1,7 @@
 const { Tour } = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
+
 const { catchAsync } = require('../utils/catchAsync');
 
 exports.deleteOne = (Model) =>
@@ -87,7 +88,7 @@ exports.getAll = (Model) =>
       .limitFields()
       .Paginate();
 
-    const docs = await features.query;
+    const docs = await features.query.explain().populate('reviews');
 
     res.status(200).json({
       status: 'success',

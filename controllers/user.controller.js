@@ -24,6 +24,7 @@ const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
 const updateUser = factory.updateOne(User);
 const deleteUser = factory.deleteOne(User);
+const addUser = factory.createOne(User);
 
 const updateMe = catchAsync(async (req, res, next) => {
   // 1) create error if users Posts password data
@@ -65,4 +66,5 @@ module.exports = {
   getAllUsers,
   updateMe,
   deleteMe,
+  addUser,
 };
