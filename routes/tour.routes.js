@@ -14,23 +14,37 @@ const {
   getMonthlyPlan,
 } = require('../controllers/tour.controller');
 
-// POST /tour/245sdfw/reviews
-// GET /tour/245sdfw/reviews
-
 router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/tour-stats').get(getTourStats);
 
-router.route('/monthly-pan/:year').get(getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide', 'guide'),
+    getMonthlyPlan,
+  );
 
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
 
-router.route('/').get(authController.protect, getAllTours).post(addTour);
+router
+  .route('/')
+  .get(getAllTours)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    addTour,
+  );
 
 router
   .route('/:id')
   .get(getTourById)
-  .patch(updateTour)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    updateTour,
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
