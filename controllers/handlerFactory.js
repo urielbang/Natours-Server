@@ -88,7 +88,7 @@ exports.getAll = (Model) =>
       .limitFields()
       .Paginate();
 
-    const docs = await features.query.explain().populate('reviews');
+    const docs = await features.query.populate('reviews');
 
     res.status(200).json({
       status: 'success',
