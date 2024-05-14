@@ -97,10 +97,6 @@ const getMonthlyPlan = catchAsync(async (req, res, next) => {
   });
 });
 
-// /tours-within/:distance/center/:latLng/unit/:unit
-
-// /tours-distance?distance=233&center=-40,45&unit=mi
-// /tours-distance/233/center/-40,45/unit/mi
 const getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latLng, unit } = req.params;
   const [lat, lng] = latLng.split(',');
@@ -127,6 +123,45 @@ const getToursWithin = catchAsync(async (req, res, next) => {
     },
   });
 });
+const getDistances = catchAsync(async (req, res, next) => {
+  const { latLng, unit } = req.params;
+  const [lat, lng] = latLng.split(',');
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'please provide latitut and longitude in the format lat,lng',
+      ),
+    );
+  }
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: 0.001,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+
+    data: {
+      data: distances,
+    },
+  });
+});
 
 module.exports = {
   deleteTour,
@@ -138,4 +173,5 @@ module.exports = {
   getTourStats,
   getMonthlyPlan,
   getToursWithin,
+  getDistances,
 };
